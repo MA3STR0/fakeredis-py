@@ -103,13 +103,13 @@ class StreamsCommandsMixin:
 
     def _xread(self, stream_start_id_list: List, count: int, first_pass: bool):
         max_inf = StreamRangeTest.decode(b"+")
-        res = list()
+        res = dict()
         for item, start_id in stream_start_id_list:
             stream_results = self._xrange(item.value, start_id, max_inf, False, count)
             if first_pass and (count is None or len(stream_results) < count):
                 return None
             if len(stream_results) > 0:
-                res.append([item.key, stream_results])
+                res[item.key] = stream_results
         return res
 
     def _xreadgroup(
